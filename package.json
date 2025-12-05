@@ -1,0 +1,34 @@
+{
+  "name": "file-uploader-fake-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "To install dependencies:",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
+    "@typescript-eslint/parser": "^8.48.1",
+    "bun-types": "^1.3.3",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "typescript": "^5",
+    "undici-types": "^7.16.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "module": "index.ts"
+}
