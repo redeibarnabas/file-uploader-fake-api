@@ -11,6 +11,8 @@ fs.mkdirSync(BASE_DIR, { recursive: true });
 
 type MulterRequest = express.Request<{ path: string }> & { file?: Express.Multer.File };
 
+const PORT = Number(process.env.PORT || 4500);
+
 function resolvePath(filePath: string): string {
     if (filePath.startsWith('/')) {
         filePath = filePath.slice(1);
@@ -38,7 +40,7 @@ app.post('/files/*path', upload.single('file'), async (req: MulterRequest, res: 
         await fsPromises.mkdir(path.dirname(target), { recursive: true });
         await fsPromises.writeFile(target, req.file.buffer, { mode: 0o644 });
 
-        return res.status(201).json({ path: filePath });
+        return res.status(201).json({ url: `http://localhost:${PORT}/files/${filePath}`, path: filePath });
     } catch (err) {
         return res.status(400).json({ error: err.message || 'Upload failed' });
     }
@@ -79,7 +81,6 @@ app.delete('/files/*path', async (req: MulterRequest, res: express.Response) => 
     }
 });
 
-const PORT = Number(process.env.PORT || 4500);
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
