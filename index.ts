@@ -26,26 +26,31 @@ function logError(...args: unknown[]): void {
     console.error(`[${now()}]`, ...args);
 }
 
-function resolvePath(filePath: string | string[]): string {
+function resolvePath(filePath: string | string[], absolute: boolean = true): string {
     if (!filePath) {
         throw new Error('Missing path');
     }
 
-    // normalize array params (e.g. ['a','b','c']) into a single path string "a/b/c"
     if (Array.isArray(filePath)) {
         filePath = filePath.join('/');
+    } else {
+        filePath = filePath.split(',').join('/');
     }
 
     if (filePath.startsWith('/')) {
         filePath = filePath.slice(1);
     }
 
-    const target = path.resolve(BASE_DIR, filePath);
-    if (!target.startsWith(BASE_DIR + path.sep) && target !== BASE_DIR) {
-        throw new Error('Invalid path');
+    if (absolute) {
+        const target = path.resolve(BASE_DIR, filePath);
+        if (!target.startsWith(BASE_DIR + path.sep) && target !== BASE_DIR) {
+            throw new Error('Invalid path');
+        }
+
+        return target;
     }
 
-    return target;
+    return filePath;
 }
 
 const resolveAndEnsureFile = (req: MulterRequest): string => {
@@ -114,8 +119,9 @@ app.put('/files/*path', (req: MulterRequest, res: express.Response) => {
                 writeStream.on('finish', () => {
                     if (responded) return;
                     responded = true;
-                    log('Upload successful', { target, path: filePath, ip: req.ip });
-                    return res.status(201).json({ url: `http://localhost:${PORT}/files/${filePath}`, path: filePath });
+                    const path = resolvePath(filePath, false);
+                    log('Upload successful', { target, path, ip: req.ip });
+                    return res.status(201).json({ url: `http://localhost:${PORT}/files/${path}`, path });
                 });
 
                 req.pipe(writeStream);
